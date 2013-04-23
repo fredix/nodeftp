@@ -41,5 +41,5 @@ LIBS += -lz \
         -lboost_thread-mt \
         -lQxtCore
 
-INCLUDEPATH += ../../externals/libqxt/
-INCLUDEPATH += ../../externals/libqxt/src/core
+INCLUDEPATH += ./externals/libqxt/
+INCLUDEPATH += ./externals/libqxt/src/core

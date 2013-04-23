@@ -1,0 +1,3 @@
+[submodule "externals/libqxt"]
+	path = externals/libqxt
+	url = git://github.com/nodecast/libqxt.git
