@@ -11,3 +11,8 @@
 *.lai
 *.la
 *.a
+
+nodeftp
+nodeftp.pro.user
+Makefile
+moc_*
