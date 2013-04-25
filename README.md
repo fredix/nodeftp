@@ -50,6 +50,6 @@ Create a node with the NCS web interface or the HTTP API ( https://github.com/no
 and launch the service
 
 ```bash
- ncw --worker-type=service --worker-name=ftp --ncs-ip=NCS_IP --ncs-port=5569 --node-uuid=nodeuuid --node-password=nodepassword --directory=/var/lib/ncs/ftp --stdout=true --exec="nodeftp --base-directory=/var/lib/nodeftp --ftp-server-port=2122"
+ncw --worker-type=service --worker-name=ftp --ncs-ip=NCS_IP --ncs-port=5569 --node-uuid=nodeuuid --node-password=nodepassword --directory=/var/lib/ncs/ftp --stdout=true --exec="nodeftp --base-directory=/var/lib/nodeftp --ftp-server-port=2121"
 ```
 

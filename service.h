@@ -1,8 +1,8 @@
 /****************************************************************************
-**   ncs is the backend's server of nodecast
+**   nodeftp is the nodecast ftp server
 **   Copyright (C) 2010-2013  Frédéric Logier <frederic@logier.org>
 **
-**   https://github.com/nodecast/ncs
+**   https://github.com/nodecast/nodeftp
 **
 **   This program is free software: you can redistribute it and/or modify
 **   it under the terms of the GNU Affero General Public License as
@@ -62,7 +62,6 @@ class Service : public QObject
 public:
     Service(params a_ncs_params, QObject *parent = 0);
     ~Service();
-    void Nodeftp_init();    
 
     // Unix signal handlers.
     static void hupSignalHandler(int unused);
@@ -87,7 +86,6 @@ private:
     params m_params;
     QThread *node_thread_ftp;
     QThread *ncw_thread;
-
 };
 
 #endif // SERVICE_H

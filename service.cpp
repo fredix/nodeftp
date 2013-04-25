@@ -1,8 +1,8 @@
 /****************************************************************************
-**   ncs is the backend's server of nodecast
+**   nodeftp is the nodecast ftp server
 **   Copyright (C) 2010-2013  Frédéric Logier <frederic@logier.org>
 **
-**   https://github.com/nodecast/ncs
+**   https://github.com/nodecast/nodeftp
 **
 **   This program is free software: you can redistribute it and/or modify
 **   it under the terms of the GNU Affero General Public License as
@@ -165,7 +165,7 @@ Service::Service(params a_params, QObject *parent) : m_params(a_params), QObject
     node_thread_ftp = new QThread(this);
     m_nodeftp = new Nodeftp(m_params.base_directory, port);
     connect(m_nodeftp, SIGNAL(destroyed()), node_thread_ftp, SLOT(quit()), Qt::DirectConnection);
-    connect(node_thread_ftp, SIGNAL(started()), m_nodeftp, SLOT(ftp_init()));
+    connect(node_thread_ftp, SIGNAL(started()), m_nodeftp, SLOT(init()));
     connect(ncw, SIGNAL(parseData(QString)), m_nodeftp, SLOT(receive_payload(QString)), Qt::QueuedConnection);
 
 
