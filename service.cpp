@@ -25,7 +25,11 @@ Io::~Io()
 {
     notifier->setEnabled(false);
     //delete(input);
+    qDebug() << "Io::~Io close socket";
     z_receive->close();
+    qDebug() << "Io::~Io delete socket";
+    delete(z_receive);
+    qDebug() << "Io::~Io close log";
     io_log->close();
     qDebug() << "END IO";
 }
@@ -34,8 +38,8 @@ Io::Io() : QObject()
 {
     //input  = new QTextStream( stdin,  QIODevice::ReadOnly );
 
-    zmq::context_t context(1);
-    z_receive = new zmq::socket_t(context, ZMQ_PAIR);
+    z_context = new zmq::context_t (1);
+    z_receive = new zmq::socket_t(*z_context, ZMQ_PAIR);
 
     int hwm = 50000;
     z_receive->setsockopt(ZMQ_SNDHWM, &hwm, sizeof (hwm));

@@ -47,6 +47,7 @@ private slots:
     void receive_payload();
 
 private:
+    zmq::context_t * z_context;
     zmq::socket_t *z_receive;
 
     QFile *io_log;
