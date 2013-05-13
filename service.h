@@ -23,6 +23,7 @@
 
 #include <QThread>
 #include "nodeftp.h"
+#include <zmq.hpp>
 
 
 struct params {
@@ -43,9 +44,11 @@ public:
     ~Io();
 
 private slots:
-    void readStdin();
+    void receive_payload();
 
 private:
+    zmq::socket_t *z_receive;
+
     QFile *io_log;
     QSocketNotifier* notifier;
     QTextStream* input;
