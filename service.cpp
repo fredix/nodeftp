@@ -24,37 +24,18 @@
 Io::~Io()
 {
     notifier->setEnabled(false);
-    //delete(input);
-    qDebug() << "Io::~Io close socket";
-    z_receive->close();
-    qDebug() << "Io::~Io delete socket";
-    delete(z_receive);
-    qDebug() << "Io::~Io close log";
+    delete(input);
     io_log->close();
     qDebug() << "END IO";
 }
 
 Io::Io() : QObject()
 {
-    //input  = new QTextStream( stdin,  QIODevice::ReadOnly );
-
-    z_context = new zmq::context_t (1);
-    z_receive = new zmq::socket_t(*z_context, ZMQ_PAIR);
-
-    int hwm = 50000;
-    z_receive->setsockopt(ZMQ_SNDHWM, &hwm, sizeof (hwm));
-    z_receive->setsockopt(ZMQ_RCVHWM, &hwm, sizeof (hwm));
-    z_receive->bind("ipc:///tmp/ncw_worker");
-
-
-    int socket_fd;
-    size_t socket_size = sizeof(socket_fd);
-    z_receive->getsockopt(ZMQ_FD, &socket_fd, &socket_size);
-
+    input  = new QTextStream( stdin,  QIODevice::ReadOnly );
 
     // Demand notification when there is data to be read from stdin
-    notifier = new QSocketNotifier( socket_fd, QSocketNotifier::Read, this );
-    connect(notifier, SIGNAL(activated(int)), this, SLOT(receive_payload()), Qt::DirectConnection);
+    notifier = new QSocketNotifier( STDIN_FILENO, QSocketNotifier::Read );
+    connect(notifier, SIGNAL(activated(int)), this, SLOT(readStdin()), Qt::DirectConnection);
 
 
     io_log = new QFile("/tmp/ncw_nodeftp");
@@ -65,54 +46,29 @@ Io::Io() : QObject()
     //*cout << prompt;
 }
 
-void Io::receive_payload()
+void Io::readStdin()
 {
     notifier->setEnabled(false);
-    qDebug() << "Io::receive_payload !!!!!!!!!";
 
 
-    qint32 events = 0;
-    std::size_t eventsSize = sizeof(events);
-    z_receive->getsockopt(ZMQ_EVENTS, &events, &eventsSize);
+//    qDebug() << "READ STDIN";
+    // Read the data
+    QString line = input->readLine();
 
-    qDebug() << "ZMQ_EVENTS : " <<  events;
+    io_log->write(line.toAscii());
+    io_log->write("\n");
+    io_log->flush();
 
+    //writeStdout("LINE : " + line);
+    //if (!line.isNull() && !line.isEmpty())
+    //{
+    // Parse received data
 
-
-    if (events & ZMQ_POLLIN)
-    {
-        qDebug() << "Io::receive_payload ZMQ_POLLIN";
-
-        while (true) {
-            zmq::message_t request;
-
-            bool res = z_receive->recv (&request, ZMQ_NOBLOCK);
-            if (!res && zmq_errno () == EAGAIN) break;
-
-            qDebug() << "Io::receive_payload received request: [" << (char*) request.data() << "]";
-
-            if (request.size() == 0) {
-                qDebug() << "Io::worker_response received request 0";
-                break;
-            }
+    emit parseData(line);
 
 
-            QString line = QString::fromAscii((const char*)request.data(), request.size());
+    //}
 
-            io_log->write(line.toAscii());
-            io_log->write("\n");
-            io_log->flush();
-
-            //writeStdout("LINE : " + line);
-            //if (!line.isNull() && !line.isEmpty())
-            //{
-            // Parse received data
-
-            emit parseData(line);
-        }
-
-
-    }
     notifier->setEnabled(true);
 }
 

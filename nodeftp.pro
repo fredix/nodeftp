@@ -39,9 +39,7 @@ LIBS += -lz \
         -lboost_system \
         -lboost_filesystem-mt \
         -lboost_thread-mt \
-        -lQxtCore \
-        -lzmq
+        -lQxtCore
 
-INCLUDEPATH += ./externals/cppzmq/
 INCLUDEPATH += ./externals/libqxt/
 INCLUDEPATH += ./externals/libqxt/src/core

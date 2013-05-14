@@ -39,6 +39,7 @@ public:
 
 private:
     void writeStdout(QString s);
+    bool add_ftp_user(QString email, QString password, QString path);
 
     QString m_directory;
     int m_port;
@@ -53,7 +54,6 @@ private:
 
 public slots:
     void init();
-    bool add_ftp_user(QString email, QString password, QString path);
     void receive_payload(QString s);
 
     //void remove_user(QString username);

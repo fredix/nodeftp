@@ -167,7 +167,11 @@ Nodeftp::Nodeftp(QString a_directory, int port) : m_directory(a_directory), m_po
 
 bool Nodeftp::add_ftp_user(QString email, QString password, QString path)
 {
-    qDebug() << "Nodeftp::add_user : " << email;
+    QString t_log = "Nodeftp::add_user : " + email + " " + password + " " + path;
+    log->write(t_log.toAscii());
+    log->write("\n");
+    log->flush();
+
     // check auth
     QString token, directory;
     //if (ncs_auth(email, token, directory))
@@ -256,16 +260,16 @@ void Nodeftp::writeStdout(QString s)
 
 void Nodeftp::receive_payload(QString s)
 {
-
    // writeStdout("PARSE : " + s);
-
     //return;
-
-
     //std::cout << s.toStdString() << std::endl;
-
     // Do something with your received data here
     //writeStdout(s);
+
+    QString t_log = "Nodeftp::receive_payload : " + s;
+    log->write(t_log.toAscii());
+    log->write("\n");
+    log->flush();
 
 
     QVariant json = QxtJSON::parse(s);
