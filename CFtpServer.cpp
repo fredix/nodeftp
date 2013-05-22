@@ -606,11 +606,11 @@ CFtpServer::CClientEntry *CFtpServer::AddClient( SOCKET Sock, struct sockaddr_in
 			struct sockaddr ServerSin;
 			socklen_t Server_Sin_Len = sizeof( ServerSin );
 			getsockname( Sock, &ServerSin, &Server_Sin_Len );
-            //pClient->ulServerIP = (((struct sockaddr_in *) &(ServerSin))->sin_addr).s_addr;
-            if (!usPassiveListeningIp.empty())
+            pClient->ulServerIP = (((struct sockaddr_in *) &(ServerSin))->sin_addr).s_addr;
+            /*if (!usPassiveListeningIp.empty())
                 pClient->ulServerIP = ntohl( inet_addr(usPassiveListeningIp.c_str()) );
             else pClient->ulServerIP = (((struct sockaddr_in *) &(ServerSin))->sin_addr).s_addr;
-
+            */
 			pClient->ulClientIP = (((struct sockaddr_in *) (Sin))->sin_addr).s_addr;
 
 			pClient->pFtpServer = this;
@@ -1107,14 +1107,14 @@ void *CFtpServer::CClientEntry::Shell( void *pvParam )
 					if( listen( pClient->DataSock, 1) == SOCKET_ERROR )
 						continue;
 
-                    /*std::string passiveIp;
+                    std::string passiveIp;
                     unsigned long ulIp;
                     pFtpServer->GetPassiveListeningIp(&passiveIp);
 
-                   // if (!passiveIp.empty())
-                   //     ulIp = ntohl( inet_addr(passiveIp.c_str()) );
-                   // else ulIp = ntohl( pClient->ulServerIP );*/
-                    unsigned long ulIp = ntohl( pClient->ulServerIP );
+                   if (!passiveIp.empty())
+                        ulIp = ntohl( inet_addr(passiveIp.c_str()) );
+                    else ulIp = ntohl( pClient->ulServerIP );
+                   //unsigned long ulIp = ntohl( pClient->ulServerIP );
 					pClient->SendReply2( "227 Entering Passive Mode (%lu,%lu,%lu,%lu,%u,%u)",
 						(ulIp >> 24) & 255, (ulIp >> 16) & 255, (ulIp >> 8) & 255, ulIp & 255,
 						pClient->usDataPort / 256 , pClient->usDataPort % 256 );
