@@ -28,6 +28,7 @@
 struct params {
     QString base_directory;
     int ftp_server_port;
+    QString ftp_server_passive_ip;
     QString mongodb_ip;
     QString mongodb_base;
 };

@@ -140,7 +140,7 @@ void OnClientEvent( int Event, CFtpServer::CClientEntry *pClient, void *pArg )
 }
 
 
-Nodeftp::Nodeftp(QString a_directory, int port) : m_directory(a_directory), m_port(port)
+Nodeftp::Nodeftp(QString a_directory, int port, QString a_passive_ip) : m_directory(a_directory), m_port(port), m_passive_ip(a_passive_ip)
 {
     FtpServer = new CFtpServer();
 
@@ -157,7 +157,8 @@ Nodeftp::Nodeftp(QString a_directory, int port) : m_directory(a_directory), m_po
     //FtpServer->SetDataPortRange( 100, 900 ); // data TCP-Port range = [100-999]
     FtpServer->SetDataPortRange( 1025, 1900 ); // data TCP-Port range = [100-999]
     FtpServer->SetCheckPassDelay( 500 ); // milliseconds. Bruteforcing protection.
-
+   // FtpServer->SetPassiveListeningIp( "54.215.7.74" );
+    FtpServer->SetPassiveListeningIp( m_passive_ip.toStdString() );
 
 #ifdef CFTPSERVER_ENABLE_ZLIB
     FtpServer->EnableModeZ( true );
@@ -213,7 +214,7 @@ void Nodeftp::init()
 {
     output = new QTextStream( stdout, QIODevice::WriteOnly );
 
-    log = new QFile("/tmp/ftp");
+    log = new QFile("/tmp/nodeftp");
      if (!log->open(QIODevice::Append | QIODevice::Text))
              return;
 

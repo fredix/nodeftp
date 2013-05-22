@@ -163,7 +163,7 @@ Service::Service(params a_params, QObject *parent) : m_params(a_params), QObject
 
 
     node_thread_ftp = new QThread(this);
-    m_nodeftp = new Nodeftp(m_params.base_directory, port);
+    m_nodeftp = new Nodeftp(m_params.base_directory, port, m_params.ftp_server_passive_ip);
     connect(m_nodeftp, SIGNAL(destroyed()), node_thread_ftp, SLOT(quit()), Qt::DirectConnection);
     connect(node_thread_ftp, SIGNAL(started()), m_nodeftp, SLOT(init()));
     connect(ncw, SIGNAL(parseData(QString)), m_nodeftp, SLOT(receive_payload(QString)), Qt::QueuedConnection);

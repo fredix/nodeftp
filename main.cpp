@@ -74,6 +74,10 @@ int main(int argc, char *argv[])
     options.add("ftp-server-port", "set the ftp server port", QxtCommandOptions::Optional);
     options.alias("ftp-server-port", "fsp");
 
+    options.add("ftp-server-passive-ip", "set the ftp server passive ip", QxtCommandOptions::Optional);
+    options.alias("ftp-server-passive-ip", "fip");
+
+
     options.add("help", "show this help text");
     options.alias("help", "h");
     options.parse(QCoreApplication::arguments());
@@ -107,6 +111,18 @@ int main(int argc, char *argv[])
         nodeftp_params.ftp_server_port = settings.value("ftp-server-port").toInt();
     }
     else nodeftp_params.ftp_server_port = 0;
+
+
+    if(options.count("ftp-server-passive-ip")) {
+        nodeftp_params.ftp_server_passive_ip = options.value("ftp-server-passive-ip").toString();
+        settings.setValue("ftp-server-passive-ip", nodeftp_params.ftp_server_passive_ip);
+    }
+    else if(settings.contains("ftp-server-passive-ip"))
+    {
+        nodeftp_params.ftp_server_passive_ip = settings.value("ftp-server-passive-ip").toString();
+    }
+    else nodeftp_params.ftp_server_passive_ip = "";
+
 
 
     settings.sync();

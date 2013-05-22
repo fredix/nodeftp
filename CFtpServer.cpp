@@ -157,6 +157,31 @@ bool CFtpServer::SetListeningPort( unsigned short int ListeningPort )
         return true;
 }
 
+
+bool CFtpServer::SetPassiveListeningIp( std::string PassiveListeningIp )
+{
+        FtpServerLock.Enter();
+        {
+            usPassiveListeningIp = PassiveListeningIp;
+        }
+        FtpServerLock.Leave();
+        return true;
+}
+
+
+bool CFtpServer::GetPassiveListeningIp( std::string *usPassiveListeningIp )
+{
+    if( usPassiveListeningIp ) {
+        FtpServerLock.Enter();
+        {
+            *usPassiveListeningIp = this->usPassiveListeningIp;
+        }
+        FtpServerLock.Leave();
+        return true;
+    }
+    return false;
+}
+
 bool CFtpServer::GetDataPortRange( unsigned short int *usStart, unsigned short int *usLen )
 {
 	if( usStart && usLen ) {
@@ -1077,7 +1102,13 @@ void *CFtpServer::CClientEntry::Shell( void *pvParam )
 					if( listen( pClient->DataSock, 1) == SOCKET_ERROR )
 						continue;
 
-					unsigned long ulIp = ntohl( pClient->ulServerIP );
+                    std::string passiveIp;
+                    unsigned long ulIp;
+                    pFtpServer->GetPassiveListeningIp(&passiveIp);
+
+                    if (!passiveIp.empty())
+                        ulIp = ntohl( inet_addr(passiveIp.c_str()) );
+                    else ulIp = ntohl( pClient->ulServerIP );
 					pClient->SendReply2( "227 Entering Passive Mode (%lu,%lu,%lu,%lu,%u,%u)",
 						(ulIp >> 24) & 255, (ulIp >> 16) & 255, (ulIp >> 8) & 255, ulIp & 255,
 						pClient->usDataPort / 256 , pClient->usDataPort % 256 );

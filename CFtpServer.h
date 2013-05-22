@@ -199,6 +199,30 @@ class CFtpServer
 		 */
 		bool SetDataPortRange( unsigned short int usStart, unsigned short int uiLen );
 
+
+        /**
+         * Set the IP CFtpServer must use in passive mode
+         *
+         * @param  passive_ip  IP
+         *
+         * @return  "true"   on success,
+         *          "false"  on error.
+         */
+        bool SetPassiveListeningIp( std::string PassiveListeningIp );
+
+
+
+        /**
+         * Get the IP CFtpServer can use to send to client in passive mode.
+         *
+         * @param  usIp  a ointer to the IP.
+         *
+         * @return  "true"   on success,
+         *          "false"  on error.
+         */
+        bool GetPassiveListeningIp( std::string *usPassiveListeningIp );
+
+
 		/**
 		 * Get the TCP Port Range CFtpServer can use to Send and Receive Files or Data.
 		 *
@@ -588,6 +612,7 @@ class CFtpServer
 		bool bIsListening;
 		bool bIsAccepting;
 		unsigned short int usListeningPort;
+        std::string usPassiveListeningIp;
 
         pthread_t AcceptingThreadID;
         static void *StartAcceptingEx( void *pvParam );

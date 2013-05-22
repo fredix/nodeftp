@@ -34,7 +34,7 @@ class Nodeftp : public QObject
 {
     Q_OBJECT
 public:
-    Nodeftp(QString a_directory, int port);
+    Nodeftp(QString a_directory, int port, QString a_passive_ip);
     ~Nodeftp();
 
 private:
@@ -43,6 +43,8 @@ private:
 
     QString m_directory;
     int m_port;
+    QString m_passive_ip;
+
     CFtpServer *FtpServer;
     QString user_email;
     QString user_password;
