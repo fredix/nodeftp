@@ -155,7 +155,7 @@ Nodeftp::Nodeftp(QString a_directory, int port, QString a_passive_ip) : m_direct
     FtpServer->SetNoTransferTimeout( 90 ); // seconds
     FtpServer->SetListeningPort( port );
     //FtpServer->SetDataPortRange( 100, 900 ); // data TCP-Port range = [100-999]
-    FtpServer->SetDataPortRange( 1025, 1900 ); // data TCP-Port range = [100-999]
+    FtpServer->SetDataPortRange( 1025, 875 ); // data TCP-Port range = [1025-1900]
     FtpServer->SetCheckPassDelay( 500 ); // milliseconds. Bruteforcing protection.
    // FtpServer->SetPassiveListeningIp( "54.215.7.74" );
     FtpServer->SetPassiveListeningIp( m_passive_ip.toStdString() );
