@@ -96,12 +96,15 @@ void OnClientEvent( int Event, CFtpServer::CClientEntry *pClient, void *pArg )
         {
             //printf( "* A client has disconnected.\r\n" );
 
-            QString login = QString::fromStdString("pClient->GetUser()->GetLogin()");
-            QString payload = "{\"action\": \"replay_ftp_user\", \"from\": \"ftp\", \"dest\": \"self\", \"login\": \"";
-            payload.append(login).append("\"}");
+            if (pClient->GetUser())
+            {
+                QString login = QString::fromStdString("pClient->GetUser()->GetLogin()");
+                QString payload = "{\"action\": \"replay_ftp_user\", \"from\": \"ftp\", \"dest\": \"self\", \"login\": \"";
+                payload.append(login).append("\"}");
 
-            pClient->GetServer()->DeleteUser(pClient->GetUser());
-            std::cout << payload.toStdString() << std::endl;
+                pClient->GetServer()->DeleteUser(pClient->GetUser());
+                std::cout << payload.toStdString() << std::endl;
+            }
             break;
         }
         case CFtpServer::CLIENT_UPLOAD:
