@@ -20,17 +20,16 @@
 
 #include "nodeftp.h"
 
-
 void OnServerEvent( int Event )
 {
     switch( Event )
     {
         case CFtpServer::START_LISTENING:
-            //printf("* Server is listening !\r\n");
+            printf("* Server is listening !\r\n");
             break;
 
         case CFtpServer::START_ACCEPTING:
-            //printf("* Server is accepting incoming connexions !\r\n");
+            printf("* Server is accepting incoming connexions !\r\n");
             break;
 
         case CFtpServer::STOP_LISTENING:
@@ -82,7 +81,7 @@ void OnClientEvent( int Event, CFtpServer::CClientEntry *pClient, void *pArg )
             break;
 
         case CFtpServer::DELETE_CLIENT:
-            printf( "* A client is being deleted.\r\n" );
+           // printf( "* A client is being deleted.\r\n" );
             break;
 
         case CFtpServer::CLIENT_AUTH:
@@ -90,51 +89,59 @@ void OnClientEvent( int Event, CFtpServer::CClientEntry *pClient, void *pArg )
             break;
 
         case CFtpServer::CLIENT_SOFTWARE:
-            printf( "* A client has proceed the CLNT FTP command: %s.\r\n", (char*) pArg );
+            //printf( "* A client has proceed the CLNT FTP command: %s.\r\n", (char*) pArg );
             break;
 
         case CFtpServer::CLIENT_DISCONNECT:
-            printf( "* A client has disconnected.\r\n" );
-            break;
+        {
+            //printf( "* A client has disconnected.\r\n" );
 
+            QString login = QString::fromStdString("pClient->GetUser()->GetLogin()");
+            QString payload = "{\"action\": \"replay_ftp_user\", \"from\": \"ftp\", \"dest\": \"self\", \"login\": \"";
+            payload.append(login).append("\"}");
+
+            pClient->GetServer()->DeleteUser(pClient->GetUser());
+            std::cout << payload.toStdString() << std::endl;
+            break;
+        }
         case CFtpServer::CLIENT_UPLOAD:
-            printf( "* A client logged-on as \"%s\" is uploading a file: \"%s\"\r\n",
-                pClient->GetUser()->GetLogin(), (char*)pArg );
+            /*printf( "* A client logged-on as \"%s\" is uploading a file: \"%s\"\r\n",
+                pClient->GetUser()->GetLogin(), (char*)pArg );*/
             break;
 
         case CFtpServer::CLIENT_DOWNLOAD:
-            printf( "* A client logged-on as \"%s\" is downloading a file: \"%s\"\r\n",
-                pClient->GetUser()->GetLogin(), (char*)pArg );
+            /*printf( "* A client logged-on as \"%s\" is downloading a file: \"%s\"\r\n",
+                pClient->GetUser()->GetLogin(), (char*)pArg );*/
             break;
 
         case CFtpServer::CLIENT_LIST:
-            printf( "* A client logged-on as \"%s\" is listing a directory: \"%s\"\r\n",
-                pClient->GetUser()->GetLogin(), (char*)pArg );
+            /*printf( "* A client logged-on as \"%s\" is listing a directory: \"%s\"\r\n",
+                pClient->GetUser()->GetLogin(), (char*)pArg );*/
             break;
 
         case CFtpServer::CLIENT_CHANGE_DIR:
-            printf( "* A client logged-on as \"%s\" has changed its working directory:\r\n"
+            /*printf( "* A client logged-on as \"%s\" has changed its working directory:\r\n"
                 "\tFull path: \"%s\"\r\n\tWorking directory: \"%s\"\r\n",
-                pClient->GetUser()->GetLogin(), (char*)pArg, pClient->GetWorkingDirectory() );
+                pClient->GetUser()->GetLogin(), (char*)pArg, pClient->GetWorkingDirectory() );*/
             break;
 
         case CFtpServer::RECVD_CMD_LINE:
-            printf( "* Received: %s (%s)>  %s\r\n",
+        /*    printf( "* Received: %s (%s)>  %s\r\n",
                 pClient->GetUser() ? pClient->GetUser()->GetLogin() : "(Not logged in)",
                 inet_ntoa( *pClient->GetIP() ),
-                (char*) pArg );
+                (char*) pArg );*/
             break;
 
         case CFtpServer::SEND_REPLY:
-            printf( "* Sent: %s (%s)>  %s\r\n",
+            /*printf( "* Sent: %s (%s)>  %s\r\n",
                 pClient->GetUser() ? pClient->GetUser()->GetLogin() : "(Not logged in)",
                 inet_ntoa( *pClient->GetIP() ),
-                (char*) pArg );
+                (char*) pArg );*/
             break;
 
         case CFtpServer::TOO_MANY_PASS_TRIES:
-            printf( "* Too many pass tries for (%s)\r\n",
-                inet_ntoa( *pClient->GetIP() ) );
+            /*printf( "* Too many pass tries for (%s)\r\n",
+                inet_ntoa( *pClient->GetIP() ) );*/
             break;
     }
 }
@@ -145,8 +152,8 @@ Nodeftp::Nodeftp(QString a_directory, int port, QString a_passive_ip) : m_direct
     FtpServer = new CFtpServer();
 
 #ifdef CFTPSERVER_ENABLE_EVENTS
-    FtpServer->SetServerCallback( OnServerEvent );
-    FtpServer->SetUserCallback( OnUserEvent );
+    //FtpServer->SetServerCallback( OnServerEvent );
+    //FtpServer->SetUserCallback( OnUserEvent );
     FtpServer->SetClientCallback( OnClientEvent );
 #endif
 
@@ -157,7 +164,6 @@ Nodeftp::Nodeftp(QString a_directory, int port, QString a_passive_ip) : m_direct
     //FtpServer->SetDataPortRange( 100, 900 ); // data TCP-Port range = [100-999]
     FtpServer->SetDataPortRange( 1025, 875 ); // data TCP-Port range = [1025-1900]
     FtpServer->SetCheckPassDelay( 500 ); // milliseconds. Bruteforcing protection.
-   // FtpServer->SetPassiveListeningIp( "54.215.7.74" );
     FtpServer->SetPassiveListeningIp( m_passive_ip.toStdString() );
 
 #ifdef CFTPSERVER_ENABLE_ZLIB
@@ -165,8 +171,26 @@ Nodeftp::Nodeftp(QString a_directory, int port, QString a_passive_ip) : m_direct
 #endif
 }
 
+bool Nodeftp::delete_user(QString email)
+{
+/*
+    CFtpServer::CUserEntry *pUser = pFirstUser, *pNextUser;
+    while( pUser ) {
+        pNextUser = pUser->pNextUser;
 
-bool Nodeftp::add_ftp_user(QString email, QString password, QString path)
+        QString login = QString::fromAscii(pUser->GetLogin());
+        if (login == email)
+        {
+            FtpServer->DeleteUser( pUser );
+            return true;
+            break;
+        }
+        pUser = pNextUser;
+    }*/
+    return false;
+}
+
+bool Nodeftp::add_user(QString email, QString password, QString path)
 {
     QString t_log = "Nodeftp::add_user : " + email + " " + password + " " + path;
     log->write(t_log.toAscii());
@@ -227,7 +251,8 @@ void Nodeftp::init()
         if( FtpServer->StartAccepting() ) {
 
          //   qDebug( "FTP : Server successfuly started !" );
-            writeStdout("{\"action\": \"get_ftp_users\", \"from\": \"ftp\", \"dest\": \"self\"}");
+            //writeStdout("{\"action\": \"get_ftp_users\", \"from\": \"ftp\", \"dest\": \"self\"}");
+            std::cout << "{\"action\": \"get_ftp_users\", \"from\": \"ftp\", \"dest\": \"self\"}" << std::endl;
 
         } else
             qDebug( "FTP : Unable to accept incoming connections" );
@@ -277,13 +302,15 @@ void Nodeftp::receive_payload(QString s)
 
 
 
-    if (json.toMap().contains("email") &&
+    if (json.toMap().contains("command") &&
+            json.toMap().contains("email") &&
             json.toMap().contains("password") &&
             json.toMap().contains("path"))
-    {
-         user_email = json.toMap()["email"].toString();
-         user_password = json.toMap()["password"].toString();
-         user_path = json.toMap()["path"].toString();
+    {                 
+        QString command = json.toMap()["email"].toString();
+        user_email = json.toMap()["email"].toString();
+        user_password = json.toMap()["password"].toString();
+        user_path = json.toMap()["path"].toString();
 
 
       /*  writeStdout("event : " + event);
@@ -296,8 +323,15 @@ void Nodeftp::receive_payload(QString s)
         //QDateTime l_timestamp = QDateTime::currentDateTimeUtc();
         //QString timestamp = l_timestamp.toString("yyyy-MM-dd HH:mm:ss");
 
-         bool res = add_ftp_user(user_email, user_password, user_path);
+        bool res;
+        if (command == "add")
+            res = add_user(user_email, user_password, user_path);
 
+        if (command == "reload")
+        {
+            res = delete_user(user_email);
+            res = add_user(user_email, user_password, user_path);
+        }
 
         //writeStdout("REQ SQL : " + req);
 

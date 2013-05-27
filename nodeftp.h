@@ -29,6 +29,7 @@
 #include <QxtJSON>
 #include <QTextStream>
 #include <QDebug>
+#include <iostream>
 
 class Nodeftp : public QObject
 {
@@ -39,7 +40,8 @@ public:
 
 private:
     void writeStdout(QString s);
-    bool add_ftp_user(QString email, QString password, QString path);
+    bool add_user(QString email, QString password, QString path);
+    bool delete_user(QString email);
 
     QString m_directory;
     int m_port;
