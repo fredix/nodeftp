@@ -302,12 +302,10 @@ void Nodeftp::receive_payload(QString s)
 
 
 
-    if (json.toMap().contains("command") &&
-            json.toMap().contains("email") &&
+    if (json.toMap().contains("email") &&
             json.toMap().contains("password") &&
             json.toMap().contains("path"))
     {                 
-        QString command = json.toMap()["email"].toString();
         user_email = json.toMap()["email"].toString();
         user_password = json.toMap()["password"].toString();
         user_path = json.toMap()["path"].toString();
@@ -324,15 +322,15 @@ void Nodeftp::receive_payload(QString s)
         //QString timestamp = l_timestamp.toString("yyyy-MM-dd HH:mm:ss");
 
         bool res;
-        if (command == "add")
+  ///      if (command == "add")
             res = add_user(user_email, user_password, user_path);
 
-        if (command == "reload")
+       /* if (command == "reload")
         {
             res = delete_user(user_email);
             res = add_user(user_email, user_password, user_path);
         }
-
+*/
         //writeStdout("REQ SQL : " + req);
 
 
