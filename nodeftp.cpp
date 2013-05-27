@@ -92,7 +92,8 @@ void OnClientEvent( int Event, CFtpServer::CClientEntry *pClient, void *pArg )
             //printf( "* A client has proceed the CLNT FTP command: %s.\r\n", (char*) pArg );
             break;
 
-        case CFtpServer::CLIENT_DISCONNECT || CFtpServer::NO_TRANSFER_TIMEOUT:
+        case CFtpServer::CLIENT_DISCONNECT:
+        case CFtpServer::NO_TRANSFER_TIMEOUT:
         {
             //printf( "* A client has disconnected.\r\n" );
 
