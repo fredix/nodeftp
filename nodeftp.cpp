@@ -98,7 +98,7 @@ void OnClientEvent( int Event, CFtpServer::CClientEntry *pClient, void *pArg )
 
             if (pClient->GetUser())
             {
-                QString login = QString::fromStdString("pClient->GetUser()->GetLogin()");
+                QString login = QString::fromStdString(pClient->GetUser()->GetLogin());
                 QString payload = "{\"action\": \"replay_ftp_user\", \"from\": \"ftp\", \"dest\": \"self\", \"login\": \"";
                 payload.append(login).append("\"}");
 
