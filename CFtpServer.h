@@ -819,6 +819,7 @@ class CFtpServer::CClientEntry
 		 *          NULL otherwise.
 		 */
 		CUserEntry *GetUser() const { return ( bIsLogged ? pUser : NULL ); }
+        CFtpServer *GetServer() const { return pFtpServer; }
 
 		/**
 		 * Get the CWD ( Current Working Directory ) of the Client.
@@ -1043,7 +1044,7 @@ class CFtpServer::CClientEntry
 		// USER LINK
 		////////////////////////////////////////
 
-		CFtpServer::CUserEntry *pUser;
+        CFtpServer::CUserEntry *pUser;
 
 		////////////////////////////////////////
 		// LINKED LIST
@@ -1059,7 +1060,7 @@ class CFtpServer::CClientEntry
 		unsigned long ulClientIP;
 
 		bool bIsCtrlCanalOpen;
-		class CFtpServer *pFtpServer;
+        class CFtpServer *pFtpServer;
 
 		/**
 		 * Send a reply to the Client.
